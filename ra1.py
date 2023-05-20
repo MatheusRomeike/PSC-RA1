@@ -6,20 +6,17 @@ def inicializarCache(tamanhoCache):
         memoriaCache[i] = -1
     return memoriaCache
 
-
 def imprimirCache(memoriaCache):
     print("Tamanho da memoria cache: ", len(memoriaCache))
     for memoria in memoriaCache.items():
         print("Posição Cache > ", memoria, "< Posição Memória")
     print("--------------------------------------------------")
 
-
 def buscarValorEmCache(memoriaCache, posicaoMemoria):
     for cache, memoria in memoriaCache.items():
         if memoria == posicaoMemoria:
             return True
     return False
-
 
 def mapeamentoDireto(tamanhoCache, posMemoria, memoriaCache):
     totalPosicoesAcessadas = 0
@@ -47,74 +44,44 @@ def mapeamentoDireto(tamanhoCache, posMemoria, memoriaCache):
     print("Total de miss: ", miss)
     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
 
-# def mapeamentoAssociativoFIFO(posMemoria, numConjuntos, tamCache):
-#     totalPosicoesAcessadas = 0
-#     hit = 0
-#     miss = 0
-#     posicaoCache = 0
-#     for posicaoMemoria in posMemoria:
-#         totalPosicoesAcessadas += 1
-#         print("Posição de memória desejada: ", posicaoMemoria)
-
-#         if (buscarValorEmCache(memoriaCache, posicaoMemoria)):
-#             hit += 1
-#             print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
-#         else:
-#             miss += 1
-#             print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
-
-#             if posicaoCache > len(memoriaCache) - 1:
-#                 posicaoCache = 0
-#             memoriaCache[posicaoCache] = posicaoMemoria
-#             posicaoCache += 1
-#         imprimirCache(memoriaCache)
-
-#     print("--------------------------------------------------")
-#     print("Total de posições acessadas: ", totalPosicoesAcessadas)
-#     print("Total de hits: ", hit)
-#     print("Total de miss: ", miss)
-#     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
-
 def mapeamentoAssociativoFIFO(numConjuntos, tamCache, posMemoria):
+    cache = [[] for _ in range(numConjuntos)]
+    filaFifo = [[] for _ in range(numConjuntos)]
     totalPosicoesAcessadas = 0
     hit = 0
     miss = 0
-    memoriaCache = [[] for _ in range(tamCache)]
-    conjuntoCache = [[] for _ in range(numConjuntos)]
-
-    for posicaoMemoria in posMemoria:
+    
+    for posicao in posMemoria:
         totalPosicoesAcessadas += 1
-        print("Posição de memória desejada:", posicaoMemoria)
-
-        conjuntoIndex = posicaoMemoria % numConjuntos
-        cacheIndex = conjuntoCache[conjuntoIndex].index(posicaoMemoria) if posicaoMemoria in conjuntoCache[conjuntoIndex] else -1
-
-        if cacheIndex != -1:
+        conjunto = posicao % numConjuntos
+        if posicao in cache[conjunto]:
             hit += 1
-            print("Linha:", totalPosicoesAcessadas, "Status: Hit")
+            print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
         else:
             miss += 1
-            print("Linha:", totalPosicoesAcessadas, "Status: Miss")
+            print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
+            if len(cache[conjunto]) == tamCache:
+                posicaoRemovida = filaFifo[conjunto].pop(0)
 
-            if len(conjuntoCache[conjuntoIndex]) < tamCache:
-                conjuntoCache[conjuntoIndex].append(posicaoMemoria)
-            else:
-                posicaoSubstituir = conjuntoCache[conjuntoIndex].pop(0)
-                conjuntoCache[conjuntoIndex].append(posicaoMemoria)
-                cacheIndex = memoriaCache.index(posicaoSubstituir)
-                memoriaCache[cacheIndex] = posicaoMemoria
+                cache[conjunto].remove(posicaoRemovida)
 
-    #imprimirCacheConjunto(memoriaCache)
+                print("A posição de memória ", posicaoRemovida, " foi removida da cache.")
 
+            cache[conjunto].append(posicao)
+            filaFifo[conjunto].append(posicao)
+
+            print("A posição de memória ", posicao, " foi adicionada à cache.")
+
+        imprimirCacheConjunto(cache)
+    
     print("--------------------------------------------------")
-    print("Total de posições acessadas:", totalPosicoesAcessadas)
-    print("Total de hits:", hit)
-    print("Total de miss:", miss)
-    print("Taxa de acertos:", (hit / totalPosicoesAcessadas) * 100, "%")
-
+    print("Total de posições acessadas: ", totalPosicoesAcessadas)
+    print("Total de hits: ", hit)
+    print("Total de miss: ", miss)
+    print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
 
 def mapeamentoAssociativoConjuntoLRU(numConjuntos, tamCache, posMemoria):
-    conjuntos = [[] for i in range(numConjuntos)]
+    cache = [[] for i in range(numConjuntos)]
     totalPosicoesAcessadas = 0
     hit = 0
     miss = 0
@@ -124,27 +91,21 @@ def mapeamentoAssociativoConjuntoLRU(numConjuntos, tamCache, posMemoria):
         conjunto = posicaoMemoria % numConjuntos
         print("Posição de memória desejada: ", posicaoMemoria)
 
-        # Verifica se o valor está na cache
-        if posicaoMemoria in conjuntos[conjunto]:
+        if posicaoMemoria in cache[conjunto]:
             hit += 1
             print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
-            # Atualiza a matriz LRU
-            lru[conjunto][conjuntos[conjunto].index(posicaoMemoria)] = totalPosicoesAcessadas
+            lru[conjunto][cache[conjunto].index(posicaoMemoria)] = totalPosicoesAcessadas
         else:
             miss += 1
             print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
-            # Verifica se a cache do conjunto está cheia
-            if len(conjuntos[conjunto]) == tamCache // numConjuntos:
-                # Obtém a posição da cache que foi acessada menos recentemente
+            if len(cache[conjunto]) == tamCache // numConjuntos:
                 posicaoLRU = lru[conjunto].index(min(lru[conjunto]))
-                # Remove o valor da cache e atualiza a matriz LRU
                 lru[conjunto].pop(posicaoLRU)
-                conjuntos[conjunto].pop(posicaoLRU)
-            # Adiciona o valor à cache do conjunto e atualiza a matriz LRU
-            conjuntos[conjunto].append(posicaoMemoria)
+                cache[conjunto].pop(posicaoLRU)
+            cache[conjunto].append(posicaoMemoria)
             lru[conjunto].append(totalPosicoesAcessadas)
 
-        imprimirCacheConjunto(conjuntos)
+        imprimirCacheConjunto(cache)
 
     print("--------------------------------------------------")
     print("Total de posições acessadas: ", totalPosicoesAcessadas)
@@ -157,40 +118,32 @@ def mapeamentoAssociativoConjuntoLFU(tamanhoCache, numConjuntos, posMemoria):
     totalPosicoesAcessadas = 0
     hit = 0
     miss = 0
-    conjuntos = [[] for _ in range(numConjuntos)] # cria uma lista de listas para representar os conjuntos
-    frequencia = [[0 for _ in range(tamanhoCache)] for _ in range(numConjuntos)] # cria uma matriz de frequência
+    cache = [[] for _ in range(numConjuntos)] 
+    frequencia = [[0 for _ in range(tamanhoCache)] for _ in range(numConjuntos)]
 
     for posicaoMemoria in posMemoria:
         totalPosicoesAcessadas += 1
         conjunto = posicaoMemoria % numConjuntos
         posicaoCache = -1
-        # busca na cache
-        for i, bloco in enumerate(conjuntos[conjunto]):
+        for i, bloco in enumerate(cache[conjunto]):
             if bloco == posicaoMemoria:
                 hit += 1
                 posicaoCache = i
                 break
-        # se não encontrou, adiciona na cache
         if posicaoCache == -1:
             miss += 1
-            # verifica se há espaço no conjunto
-            if len(conjuntos[conjunto]) < tamanhoCache:
-                posicaoCache = len(conjuntos[conjunto])
-                conjuntos[conjunto].append(posicaoMemoria)
-            # se não há espaço, substitui o bloco menos frequente
+            if len(cache[conjunto]) < tamanhoCache:
+                posicaoCache = len(cache[conjunto])
+                cache[conjunto].append(posicaoMemoria)
             else:
-                # encontra o bloco menos frequente
                 minFrequencia = min(frequencia[conjunto])
                 for i, f in enumerate(frequencia[conjunto]):
                     if f == minFrequencia:
                         posicaoCache = i
                         break
-                # substitui o bloco menos frequente
-                conjuntos[conjunto][posicaoCache] = posicaoMemoria
-            # inicializa a frequência do novo bloco
+                cache[conjunto][posicaoCache] = posicaoMemoria
             frequencia[conjunto][posicaoCache] = 1
         else:
-            # incrementa a frequência do bloco
             frequencia[conjunto][posicaoCache] += 1
 
         print("Posição de memória desejada: ", posicaoMemoria)
@@ -198,7 +151,7 @@ def mapeamentoAssociativoConjuntoLFU(tamanhoCache, numConjuntos, posMemoria):
             print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
         else:
             print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
-        imprimirCacheConjunto(conjuntos)
+        imprimirCacheConjunto(cache)
 
     print("--------------------------------------------------")
     print("Total de posições acessadas: ", totalPosicoesAcessadas)
