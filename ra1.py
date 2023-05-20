@@ -47,41 +47,71 @@ def mapeamentoDireto(tamanhoCache, posMemoria, memoriaCache):
     print("Total de miss: ", miss)
     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
 
-def mapeamentoDiretoFIFO(tamanhoCache, posMemoria, memoriaCache):
+# def mapeamentoAssociativoFIFO(posMemoria, numConjuntos, tamCache):
+#     totalPosicoesAcessadas = 0
+#     hit = 0
+#     miss = 0
+#     posicaoCache = 0
+#     for posicaoMemoria in posMemoria:
+#         totalPosicoesAcessadas += 1
+#         print("Posição de memória desejada: ", posicaoMemoria)
+
+#         if (buscarValorEmCache(memoriaCache, posicaoMemoria)):
+#             hit += 1
+#             print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
+#         else:
+#             miss += 1
+#             print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
+
+#             if posicaoCache > len(memoriaCache) - 1:
+#                 posicaoCache = 0
+#             memoriaCache[posicaoCache] = posicaoMemoria
+#             posicaoCache += 1
+#         imprimirCache(memoriaCache)
+
+#     print("--------------------------------------------------")
+#     print("Total de posições acessadas: ", totalPosicoesAcessadas)
+#     print("Total de hits: ", hit)
+#     print("Total de miss: ", miss)
+#     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
+
+def mapeamentoAssociativoFIFO(numConjuntos, tamCache, posMemoria):
     totalPosicoesAcessadas = 0
     hit = 0
     miss = 0
-    posicaoCache = 0
+    memoriaCache = [[] for _ in range(tamCache)]
+    conjuntoCache = [[] for _ in range(numConjuntos)]
+
     for posicaoMemoria in posMemoria:
         totalPosicoesAcessadas += 1
-        print("Posição de memória desejada: ", posicaoMemoria)
+        print("Posição de memória desejada:", posicaoMemoria)
 
-        if (buscarValorEmCache(memoriaCache, posicaoMemoria)):
+        conjuntoIndex = posicaoMemoria % numConjuntos
+        cacheIndex = conjuntoCache[conjuntoIndex].index(posicaoMemoria) if posicaoMemoria in conjuntoCache[conjuntoIndex] else -1
+
+        if cacheIndex != -1:
             hit += 1
-            print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
+            print("Linha:", totalPosicoesAcessadas, "Status: Hit")
         else:
             miss += 1
-            print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
+            print("Linha:", totalPosicoesAcessadas, "Status: Miss")
 
-            # # Substitui a posição mais antiga
-            # if len(posicoesAcessadas) == tamanhoCache:
-            #     posicaoRemovida = posicoesAcessadas.pop(0)
-            #     memoriaCache[posicaoRemovida % tamanhoCache] = -1
-            #     posicaoCache += 1
+            if len(conjuntoCache[conjuntoIndex]) < tamCache:
+                conjuntoCache[conjuntoIndex].append(posicaoMemoria)
+            else:
+                posicaoSubstituir = conjuntoCache[conjuntoIndex].pop(0)
+                conjuntoCache[conjuntoIndex].append(posicaoMemoria)
+                cacheIndex = memoriaCache.index(posicaoSubstituir)
+                memoriaCache[cacheIndex] = posicaoMemoria
 
-            # # Insere a nova posição
-            # posicoesAcessadas.append(posicaoMemoria)
-            if posicaoCache > len(memoriaCache) - 1:
-                posicaoCache = 0
-            memoriaCache[posicaoCache] = posicaoMemoria
-            posicaoCache += 1
-        imprimirCache(memoriaCache)
+    #imprimirCacheConjunto(memoriaCache)
 
     print("--------------------------------------------------")
-    print("Total de posições acessadas: ", totalPosicoesAcessadas)
-    print("Total de hits: ", hit)
-    print("Total de miss: ", miss)
-    print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
+    print("Total de posições acessadas:", totalPosicoesAcessadas)
+    print("Total de hits:", hit)
+    print("Total de miss:", miss)
+    print("Taxa de acertos:", (hit / totalPosicoesAcessadas) * 100, "%")
+
 
 def mapeamentoAssociativoConjuntoLRU(numConjuntos, tamCache, posMemoria):
     conjuntos = [[] for i in range(numConjuntos)]
@@ -205,7 +235,11 @@ print(memoriaCache)
 # mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
 #                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
 
-mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
+# mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
+#                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+
+
+mapeamentoAssociativoFIFO(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
 
 
