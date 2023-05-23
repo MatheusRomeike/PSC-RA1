@@ -171,6 +171,9 @@ def imprimirCacheConjunto(conjuntos):
 
 tamanhoCache = int(input("Digite o tamanho da memoria cache: "))
 
+# memoriaCache1 = inicializarCache(tamanhoCache)
+
+# mapeamentoDireto(tamanhoCache, [1, 2, 1, 2, 4, 3, 2, 9, 12, 1, 2, 22, 23,  1, 2, 3, 2], memoriaCache1)
 
 tamanhosPossiveis = [1, 2, 4 ,8, 16]
 tecnicasSubstituicao = ['LRU', 'lru', 'LFU', 'lfu', 'FIFO', 'fifo']
@@ -191,16 +194,14 @@ while condicao < 1:
 
 memoriaCache = inicializarCache(tamanhoCache)
 print(memoriaCache)
-
+posMemo = [1, 2, 1, 11, 1,
+                 16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123]
 
 if tecnicaSubstituicao == "LRU" or tecnicaSubstituicao == "lru":
-    mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
-                    16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+    mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 2, 4, 3, 2, 9, 12, 1, 2, 22, 23,  1, 2, 3, 2])
 elif tecnicaSubstituicao == "LFU" or tecnicaSubstituicao == "lfu":
-    mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
-                 16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+    mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 2, 4, 3, 2, 9, 12, 1, 2, 22, 23,  1, 2, 3, 2])
 else: 
-    mapeamentoAssociativoFIFO(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
-                 16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+    mapeamentoAssociativoFIFO(tamanhoConjunto, tamanhoCache, [1, 2, 1, 2, 4, 3, 2, 9, 12, 1, 2, 22, 23,  1, 2, 3, 2])
 
 
