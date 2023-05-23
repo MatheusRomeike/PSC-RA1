@@ -45,6 +45,8 @@ def mapeamentoDireto(tamanhoCache, posMemoria, memoriaCache):
     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
 
 def mapeamentoAssociativoFIFO(numConjuntos, tamCache, posMemoria):
+    print("-----------------------FIFO-------------------------")
+
     cache = [[] for _ in range(numConjuntos)]
     filaFifo = [[] for _ in range(numConjuntos)]
     totalPosicoesAcessadas = 0
@@ -81,6 +83,7 @@ def mapeamentoAssociativoFIFO(numConjuntos, tamCache, posMemoria):
     print("Taxa de acertos: ", (hit / totalPosicoesAcessadas) * 100, "%")
 
 def mapeamentoAssociativoConjuntoLRU(numConjuntos, tamCache, posMemoria):
+    print("-----------------------LRU-------------------------")
     cache = [[] for i in range(numConjuntos)]
     totalPosicoesAcessadas = 0
     hit = 0
@@ -115,6 +118,7 @@ def mapeamentoAssociativoConjuntoLRU(numConjuntos, tamCache, posMemoria):
     
 
 def mapeamentoAssociativoConjuntoLFU(tamanhoCache, numConjuntos, posMemoria):
+    print("-----------------------LFU-------------------------")
     totalPosicoesAcessadas = 0
     hit = 0
     miss = 0
@@ -173,26 +177,34 @@ tamanhoCache = int(input("Digite o tamanho da memoria cache: "))
 
 
 tamanhosPossiveis = [1, 2, 4 ,8, 16]
+tecnicasSubstituicao = ['LRU', 'lru', 'LFU', 'lfu', 'FIFO', 'fifo']
 condicao = 0
 while condicao < 1:
     tamanhoConjunto = int(input("Digite o tamanho do conjunto: 1, 2, 4, 8 ou 16 blocos: "))
+    tecnicaSubstituicao = input("Digite qual tecnica de substituição deseja utilizar (LFU, LRU ou FIFO): ")
     if  tamanhoConjunto not in tamanhosPossiveis:
         print("Tamanho de conjunto não é valido")
+    elif tecnicaSubstituicao not in tecnicasSubstituicao:
+        print("Digite uma técnica de substituição válida")
     else:
         condicao = 1
+
+
         
 
 
 memoriaCache = inicializarCache(tamanhoCache)
 print(memoriaCache)
-# mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
-#                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
-
-# mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
-#                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
 
 
-mapeamentoAssociativoFIFO(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
+if tecnicasSubstituicao == "LRU" or tecnicasSubstituicao == "lru":
+    mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
+                    16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+elif tecnicasSubstituicao == "LFU" or tecnicasSubstituicao == "lfu":
+    mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
+                 16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
+else: 
+    mapeamentoAssociativoFIFO(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
 
 
