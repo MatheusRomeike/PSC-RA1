@@ -151,10 +151,6 @@ def mapeamentoAssociativoConjuntoLFU(tamanhoCache, numConjuntos, posMemoria):
             frequencia[conjunto][posicaoCache] += 1
 
         print("Posição de memória desejada: ", posicaoMemoria)
-        if posicaoCache == -1:
-            print("Linha: ", totalPosicoesAcessadas, " Status: Miss")
-        else:
-            print("Linha: ", totalPosicoesAcessadas, " Status: Hit")
         imprimirCacheConjunto(cache)
 
     print("--------------------------------------------------")
@@ -197,10 +193,10 @@ memoriaCache = inicializarCache(tamanhoCache)
 print(memoriaCache)
 
 
-if tecnicasSubstituicao == "LRU" or tecnicasSubstituicao == "lru":
+if tecnicaSubstituicao == "LRU" or tecnicaSubstituicao == "lru":
     mapeamentoAssociativoConjuntoLRU(tamanhoConjunto, tamanhoCache, [1, 2, 1, 11, 1,
                     16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
-elif tecnicasSubstituicao == "LFU" or tecnicasSubstituicao == "lfu":
+elif tecnicaSubstituicao == "LFU" or tecnicaSubstituicao == "lfu":
     mapeamentoAssociativoConjuntoLFU(tamanhoCache, tamanhoCache, [1, 2, 1, 11, 1,
                  16, 1, 21, 1, 26, 4, 5, 6, 7, 8, 12 ,34 , 45, 45 ,65 ,32, 123])
 else: 
